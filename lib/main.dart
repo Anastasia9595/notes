@@ -21,16 +21,15 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
   );
-  final authRepository = AuthRepository();
-  runApp(MyApp(
-    authRepository: authRepository,
-  ));
+  runApp(const MyApp());
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required AuthRepository authRepository});
+  const MyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

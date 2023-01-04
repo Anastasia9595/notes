@@ -49,7 +49,7 @@ class LoginWidget extends StatelessWidget {
           .read<LoginCubit>()
           .signIn(email: _emailTextController.text.trim(), password: _passwordTextController.text.trim());
       String token = context.read<LoginCubit>().state.user.token;
-      context.read<NoteCubit>().getNotes(token);
+      context.read<NoteCubit>().getAllNotes(token);
       log(result.toString());
       if (!mounted) {
         return;

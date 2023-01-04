@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:notes_laravel/helpers/utils.dart';
 
 import '../../buisness_logic/model/note.dart';
 import '../../helpers/constants.dart';
@@ -23,12 +21,18 @@ class ListTileNoteComponent extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.20,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              note.title,
-              maxLines: 1,
-              style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          Flexible(
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  note.title,
+                  maxLines: 1,
+                  style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -66,7 +70,7 @@ class ListTileNoteComponent extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 5, bottom: 10),
                 child: Text(
-                  note.createdAt.toString(),
+                  Utils.convertDateTimeDisplay(note.updatedAt),
                   style: const TextStyle(color: Colors.white),
                 ),
               ),

@@ -3,19 +3,21 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
+import '../../helpers/utils.dart';
 import '../model/note.dart';
 import '../services/notes_repository.dart';
 import 'note_state.dart';
 
-class NoteCubit extends Cubit<NoteState> {
+class NoteCubit extends Cubit<NoteState> with HydratedMixin {
   final NotesRepository _notesRepository;
   NoteCubit(this._notesRepository) : super(NoteState.initial());
 
-  Future getNotes(String token) async {
-    List<Note> notes = [];
+  Future getAllNotes(String token) async {
+    List<Note> notesListdb = [];
     emit(state.copyWith(isLoading: true));
-    log(state.isLoading.toString());
+    // log(state.isLoading.toString());
 
     Response? response = await NotesRepository().getNotes(token);
     if (response != null) {
@@ -30,16 +32,67 @@ class NoteCubit extends Cubit<NoteState> {
               isFavorite: notesListItems['attributes']['isFavorite'] == 0 ? false : true,
               createdAt: DateTime.tryParse(notesListItems['attributes']['created_at']),
               updatedAt: DateTime.tryParse(notesListItems['attributes']['updated_at']));
-          notes.add(note);
+          notesListdb.add(note);
         }
-        emit(state.copyWith(notesList: notes, isLoading: false));
-        log(state.notesList.toString());
-        log(state.isLoading.toString());
+        // log(notesListdb.toString());
+
+        // log(listsAreEqual(notesListdb, state.notesList).toString());
+        emit(state.copyWith(
+            notesList: Utils.listsAreEqual(notesListdb, state.notesList) ? state.notesList : notesListdb,
+            isLoading: false));
+        // log(state.notesList.toString());
+        // log(state.isLoading.toString());
       } else {
         log(response.statusCode.toString());
       }
     } else {
       log('response is null');
     }
+  }
+
+  Future updateNotesLocal(String token) async {
+    List<Note> newNotesList = [];
+
+    // Get Data from Database and save it in empty List
+    Response? response = await NotesRepository().getNotes(token);
+
+    if (response != null) {
+      if (response.statusCode == 200) {
+        List<dynamic> notesListDB = jsonDecode(response.body)['data'];
+        for (var notesListItems in notesListDB) {
+          Note newNote = state.selectednote.copyWith(
+              id: int.tryParse(notesListItems['id']),
+              title: notesListItems['attributes']['title'],
+              description: notesListItems['attributes']['description'],
+              isFavorite: notesListItems['attributes']['isFavorite'] == 0 ? false : true,
+              createdAt: DateTime.tryParse(notesListItems['attributes']['created_at']),
+              updatedAt: DateTime.tryParse(notesListItems['attributes']['updated_at']));
+
+          newNotesList.add(newNote);
+        }
+        if (!Utils.listsAreEqual(state.notesList, newNotesList)) {
+          List<Note> localStateList = state.notesList;
+          for (int i = 0; i < newNotesList.length; i++) {
+            if (newNotesList[i] != localStateList[i]) {
+              localStateList[i] = newNotesList[i];
+            }
+          }
+
+          emit(state.copyWith(notesList: localStateList));
+        }
+      } else {
+        log('${response.statusCode}');
+      }
+    }
+  }
+
+  @override
+  NoteState? fromJson(Map<String, dynamic> json) {
+    return NoteState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(NoteState state) {
+    return state.toMap();
   }
 }

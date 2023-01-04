@@ -71,10 +71,10 @@ class MobileAuthenticationScreen extends StatelessWidget {
             builder: (context, signupState) {
               return BlocBuilder<LoginCubit, LoginState>(
                 builder: (context, signinState) {
-                  // if (signinState.isSubmitting == LoginStatus.success ||
-                  //     signupState.isSubmitting == SignupStatus.sucess) {
-                  //   return const MobileHomeScreen();
-                  // }
+                  if (signinState.isSubmitting == LoginStatus.success ||
+                      signupState.isSubmitting == SignupStatus.sucess) {
+                    return const MobileHomeScreen();
+                  }
                   return const AuthenticationWidget();
                 },
               );

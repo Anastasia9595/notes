@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -48,5 +49,24 @@ class Utils {
     } else if (value != password) {
       return 'Confirmed password must be the same password';
     }
+  }
+
+  static convertDateTimeDisplay(DateTime dateTime) {
+    var formatr = DateFormat('dd.MM.yyyy');
+    return formatr.format(dateTime);
+  }
+
+  static bool listsAreEqual(List list1, List list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1.elementAt(i) != list2.elementAt(i)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
