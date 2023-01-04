@@ -75,6 +75,7 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
           for (int i = 0; i < newNotesList.length; i++) {
             if (newNotesList[i] != localStateList[i]) {
               localStateList[i] = newNotesList[i];
+              log('updated');
             }
           }
 
