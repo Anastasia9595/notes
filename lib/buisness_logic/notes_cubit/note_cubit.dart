@@ -87,6 +87,25 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     }
   }
 
+  // function to delete note
+  Future deleteNoteLocal(int id, String token) async {
+    Response? response = await NotesRepository().deleteNote(token, id);
+    if (response != null) {
+      if (response.statusCode == 200) {
+        log('deleted');
+
+        // delete note from local state
+        List<Note> newNotesList = state.notesList;
+        newNotesList.removeWhere((element) => element.id == id);
+        emit(state.copyWith(notesList: newNotesList));
+      } else {
+        log('${response.statusCode}');
+      }
+    } else {
+      log('response is null');
+    }
+  }
+
   @override
   NoteState? fromJson(Map<String, dynamic> json) {
     return NoteState.fromMap(json);

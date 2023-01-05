@@ -20,8 +20,8 @@ class LoginCubit extends Cubit<LoginState> with HydratedMixin {
     //log(response?.statusCode.toString() ?? 'null');
     if (response != null) {
       if (response.statusCode == 201) {
-        log('Login Success');
-
+        // log('Login Success');
+        log(jsonDecode(response.body).toString());
         final User user = state.user.copyWith(
           token: jsonDecode(response.body)['token'],
           id: jsonDecode(response.body)['user']['id'],
@@ -29,7 +29,7 @@ class LoginCubit extends Cubit<LoginState> with HydratedMixin {
           email: jsonDecode(response.body)['user']['email'],
         );
 
-        log(user.toString());
+        // log(user.toString());
 
         emit(state.copyWith(isSubmitting: LoginStatus.success, user: user));
         return true;

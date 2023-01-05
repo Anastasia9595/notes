@@ -69,4 +69,12 @@ class Utils {
 
     return true;
   }
+
+  static Map<String, String> headerHelperFunction(String token) {
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
 }

@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:notes_laravel/helpers/urls.dart';
 
-import '../model/user.dart';
-
 class AuthRepository {
   Future<Response?> signIn({required String email, required String password}) async {
     try {
@@ -14,6 +12,7 @@ class AuthRepository {
       });
       return response;
     } catch (e) {
+      log('error in signIn function');
       log(e.toString());
     }
     return null;
@@ -34,7 +33,7 @@ class AuthRepository {
       });
       return response;
     } catch (e) {
-      log(e.toString());
+      log('error in signUp function $e');
     }
     return null;
   }
@@ -57,15 +56,15 @@ class AuthRepository {
   }
 
   // function to get current user
-  Future<User?> getUser(String token) async {
-    try {
-      Response response = await get(Uri.parse(Urls.user), headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      });
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
+  // Future<User?> getUser(String token) async {
+  //   try {
+  //     Response response = await get(Uri.parse(Urls.user), headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     });
+  //   } catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 }

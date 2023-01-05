@@ -56,7 +56,7 @@ class LoginWidget extends StatelessWidget {
       }
       result == false ? Future.delayed(const Duration(milliseconds: 500), () => Navigator.of(context).pop()) : null;
     } catch (e) {
-      log(e.toString());
+      log('Error in login: $e');
     }
   }
 

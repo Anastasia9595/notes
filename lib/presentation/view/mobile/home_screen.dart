@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:notes_laravel/helpers/constants.dart';
+import 'package:notes_laravel/presentation/components/custom_alertdialog.dart';
 import 'package:notes_laravel/presentation/components/listtilenote_component.dart';
 import 'package:notes_laravel/presentation/widgets/floatinaction_button_widget.dart';
 
@@ -13,12 +14,32 @@ import '../../../buisness_logic/login_cubit/login_cubit.dart';
 
 class MobileHomeScreen extends StatelessWidget {
   const MobileHomeScreen({super.key});
+  Widget buildSwipeLeftAction() => Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.red,
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+          size: 32,
+        ),
+      );
+  Widget buildSwipeRightAction() => Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.red,
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+          size: 32,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     // log(context.read<NoteCubit>().state.notesList.toString());
-    String token = context.read<LoginCubit>().state.user.token;
-    context.read<NoteCubit>().updateNotesLocal(token);
+    // String token = context.read<LoginCubit>().state.user.token;
+    // context.read<NoteCubit>().updateNotesLocal(token);
     return Scaffold(
         backgroundColor: kBackgroundColorDark,
         body: Column(
@@ -46,7 +67,36 @@ class MobileHomeScreen extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return ListTileNoteComponent(note: state.notesList[index]);
+                        return Dismissible(
+                            background: buildSwipeLeftAction(),
+                            secondaryBackground: buildSwipeRightAction(),
+                            confirmDismiss: (direction) => Future.delayed(
+                                  const Duration(milliseconds: 200),
+                                  () => showDialog(
+                                    context: context,
+                                    builder: (context) => CustomAlrtDialog(
+                                      backgroundColor: Colors.blueGrey.shade100,
+                                      iconBackgroundColor: Colors.blueGrey.shade100,
+                                      icon: Icons.delete,
+                                      title: 'Delete Note',
+                                      titleColor: Colors.black,
+                                      content: const Text('Are you sure you want to delete this note?'),
+                                      functions: [
+                                        () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                        () {
+                                          String token = context.read<LoginCubit>().state.user.token;
+                                          context.read<NoteCubit>().deleteNoteLocal(state.notesList[index].id, token);
+                                          Navigator.of(context).pop(true);
+                                        }
+                                      ],
+                                      functionNames: const ['No', 'Yes'],
+                                    ),
+                                  ),
+                                ),
+                            key: Key(state.notesList[index].toString()),
+                            child: ListTileNoteComponent(note: state.notesList[index]));
                       }
                     },
                   ),
