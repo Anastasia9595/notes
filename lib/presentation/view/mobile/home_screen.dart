@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_laravel/buisness_logic/model/note.dart';
 
 import 'package:notes_laravel/helpers/constants.dart';
+import 'package:notes_laravel/helpers/utils.dart';
 import 'package:notes_laravel/presentation/components/custom_alertdialog.dart';
 import 'package:notes_laravel/presentation/components/listtilenote_component.dart';
 import 'package:notes_laravel/presentation/widgets/floatinaction_button_widget.dart';
@@ -37,19 +39,21 @@ class MobileHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // log(context.read<NoteCubit>().state.notesList.toString());
-    // String token = context.read<LoginCubit>().state.user.token;
-    // context.read<NoteCubit>().updateNotesLocal(token);
+    context.read<NoteCubit>().updateNotesLocal(context.read<LoginCubit>().state.user.token);
     return Scaffold(
         backgroundColor: kBackgroundColorDark,
         body: Column(
           children: [
-            const SafeArea(
+            SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(top: 20.0, left: 20.0),
-                child: Text(
-                  'Welcome',
-                  style: TextStyle(color: Colors.white, fontSize: 30.0, fontWeight: FontWeight.bold),
+                child: BlocBuilder<LoginCubit, LoginState>(
+                  builder: (context, state) {
+                    return Text(
+                      'Welcome ${state.user.name}',
+                      style: TextStyle(color: Colors.white, fontSize: 30.0, fontWeight: FontWeight.bold),
+                    );
+                  },
                 ),
               ),
             ),

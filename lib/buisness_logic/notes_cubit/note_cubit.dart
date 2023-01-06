@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
@@ -70,16 +71,22 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
 
           newNotesList.add(newNote);
         }
-        if (!Utils.listsAreEqual(state.notesList, newNotesList)) {
+        // log('newNotesList: ${newNotesList.length}');
+        // log('localStateList: ${state.notesList.length}');
+
+        if (Utils.listsAreEqual(newNotesList, state.notesList) == false) {
           List<Note> localStateList = state.notesList;
-          for (int i = 0; i < newNotesList.length; i++) {
-            if (newNotesList[i] != localStateList[i]) {
-              localStateList[i] = newNotesList[i];
-              log('updated');
+          if (localStateList.length == newNotesList.length) {
+            for (int i = 0; i < newNotesList.length; i++) {
+              if (newNotesList[i] != localStateList[i]) {
+                localStateList[i] = newNotesList[i];
+                log('updated');
+              }
             }
+            emit(state.copyWith(notesList: localStateList));
           }
 
-          emit(state.copyWith(notesList: localStateList));
+          emit(state.copyWith(notesList: newNotesList));
         }
       } else {
         log('${response.statusCode}');
@@ -114,5 +121,28 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
   @override
   Map<String, dynamic>? toJson(NoteState state) {
     return state.toMap();
+  }
+
+  // delete multiple notes
+  Future deleteMultipleNotesLocal(List<int> ids, String token) async {
+    Response? response = await NotesRepository().deleteNotes(token, ids);
+    log(response?.statusCode.toString() ?? 'repsonse is null');
+    if (response != null) {
+      if (response.statusCode == 200) {
+        log('deleted');
+        log(response.body.toString());
+
+        // delete note from local state
+        // List<Note> newNotesList = state.notesList;
+        // for (var id in ids) {
+        //   newNotesList.removeWhere((element) => element.id == id);
+        // }
+        // emit(state.copyWith(notesList: newNotesList));
+      } else {
+        log('${response.statusCode}');
+      }
+    } else {
+      log('response is null');
+    }
   }
 }

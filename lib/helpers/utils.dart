@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../buisness_logic/model/note.dart';
 
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -76,5 +80,18 @@ class Utils {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     };
+  }
+
+  // function to pick random items from list
+  static List<Note> pickRandomItems(List<Note> list) {
+    List<Note> newList = [];
+    for (int i = 0; i < 5; i++) {
+      var random = Random().nextInt(list.length);
+
+      if (!newList.contains(list[random])) {
+        newList.add(list[random]);
+      }
+    }
+    return newList;
   }
 }

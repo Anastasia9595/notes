@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart';
@@ -26,6 +27,26 @@ class NotesRepository {
       Response response = await delete(
         Uri.parse('${Urls.notes}/$id'),
         headers: Utils.headerHelperFunction(token),
+      );
+
+      return response;
+    } catch (e) {
+      log(e.toString());
+      throw Exception(e);
+    }
+  }
+
+  Future<Response?> deleteNotes(String token, List<int> ids) async {
+    try {
+      Response response = await delete(
+        Uri.parse(Urls.notes),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: {
+          'ids': jsonEncode(ids),
+        },
       );
 
       return response;
