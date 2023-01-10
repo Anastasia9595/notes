@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:notes_laravel/buisness_logic/login_cubit/login_cubit.dart';
 import 'package:notes_laravel/buisness_logic/obscure_cubit/obscure_cubit.dart';
+import 'package:notes_laravel/buisness_logic/select_note_cubit/select_note_cubit.dart';
 import 'package:notes_laravel/buisness_logic/signup_cubit/signup_cubit.dart';
 import 'package:notes_laravel/presentation/view/desktop/authentication_screen.dart';
 
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<NoteCubit>(
           create: (context) => NoteCubit(NotesRepository()),
+        ),
+        BlocProvider<SelectNoteCubit>(
+          create: (context) => SelectNoteCubit(),
         ),
       ],
       child: MaterialApp(

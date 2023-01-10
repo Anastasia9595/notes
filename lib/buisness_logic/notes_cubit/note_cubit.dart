@@ -113,16 +113,6 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     }
   }
 
-  @override
-  NoteState? fromJson(Map<String, dynamic> json) {
-    return NoteState.fromMap(json);
-  }
-
-  @override
-  Map<String, dynamic>? toJson(NoteState state) {
-    return state.toMap();
-  }
-
   // delete multiple notes
   Future deleteMultipleNotesLocal(List<int> ids, String token) async {
     Response? response = await NotesRepository().deleteNotes(token, ids);
@@ -144,5 +134,44 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     } else {
       log('response is null');
     }
+  }
+
+  // function to add note to remove list
+  void addNoteToRemovedList(Note note) {
+    var newRemovedList = state.selectedNotestoDeleteList ?? [];
+
+    if (newRemovedList.contains(note)) {
+      newRemovedList.remove(note);
+      note.copyWith(isNoteSelected: false);
+    } else {
+      newRemovedList.add(note);
+      note.copyWith(isNoteSelected: !note.isNoteSelected);
+      log(note.isNoteSelected.toString());
+    }
+    emit(state.copyWith(selectedNotestoDeleteList: newRemovedList));
+  }
+
+  void setNoteToSelected(Note note) {
+    emit(state.copyWith(selectednote: note));
+  }
+
+  void setNoteToSelectedFromList(Note note) {
+    if (state.selectedNotestoDeleteList?.contains(note) ?? false) {
+      note.copyWith(isNoteSelected: true);
+    } else {
+      note.copyWith(isNoteSelected: false);
+    }
+    log(note.isNoteSelected.toString());
+    emit(state.copyWith(selectednote: note));
+  }
+
+  @override
+  NoteState? fromJson(Map<String, dynamic> json) {
+    return NoteState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(NoteState state) {
+    return state.toMap();
   }
 }

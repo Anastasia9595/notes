@@ -5,9 +5,11 @@ import '../model/note.dart';
 class NoteState extends Equatable {
   final Note selectednote;
   final List<Note> notesList;
+  List<Note>? selectedNotestoDeleteList;
   final bool isLoading;
 
-  const NoteState({required this.selectednote, required this.notesList, required this.isLoading});
+  NoteState(
+      {required this.selectednote, required this.notesList, required this.isLoading, this.selectedNotestoDeleteList});
 
   factory NoteState.initial() {
     return NoteState(
@@ -20,6 +22,7 @@ class NoteState extends Equatable {
         updatedAt: DateTime.now(),
       ),
       notesList: const [],
+      selectedNotestoDeleteList: const [],
       isLoading: false,
     );
   }
@@ -27,11 +30,13 @@ class NoteState extends Equatable {
   NoteState copyWith({
     Note? selectednote,
     List<Note>? notesList,
+    List<Note>? selectedNotestoDeleteList,
     bool? isLoading,
   }) {
     return NoteState(
       selectednote: selectednote ?? this.selectednote,
       notesList: notesList ?? this.notesList,
+      selectedNotestoDeleteList: selectedNotestoDeleteList ?? [],
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -55,5 +60,5 @@ class NoteState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [selectednote, notesList];
+  List<Object?> get props => [selectednote, notesList, selectedNotestoDeleteList, isLoading];
 }

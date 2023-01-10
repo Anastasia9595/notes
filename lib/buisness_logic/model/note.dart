@@ -9,14 +9,16 @@ class Note extends Equatable {
   final bool isFavorite;
   final DateTime createdAt;
   final DateTime updatedAt;
+  bool isNoteSelected;
 
-  const Note({
+  Note({
     required this.id,
     required this.title,
     required this.description,
     required this.isFavorite,
     required this.createdAt,
     required this.updatedAt,
+    this.isNoteSelected = false,
   });
 
   Note copyWith({
@@ -26,14 +28,17 @@ class Note extends Equatable {
     bool? isFavorite,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isNoteSelected,
   }) {
     return Note(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        isFavorite: isFavorite ?? this.isFavorite,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt);
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isFavorite: isFavorite ?? this.isFavorite,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isNoteSelected: isNoteSelected ?? this.isNoteSelected,
+    );
   }
 
   // from map to object
@@ -60,5 +65,5 @@ class Note extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, title, description, isFavorite, createdAt, updatedAt];
+  List<Object?> get props => [id, title, description, isFavorite, createdAt, updatedAt, isNoteSelected];
 }

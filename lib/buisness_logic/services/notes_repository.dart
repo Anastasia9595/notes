@@ -17,7 +17,7 @@ class NotesRepository {
       return response;
     } catch (e) {
       log(e.toString());
-      throw Exception(e);
+      // throw Exception(e);
     }
   }
 

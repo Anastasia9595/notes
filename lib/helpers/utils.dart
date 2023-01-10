@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:email_validator/email_validator.dart';
@@ -93,5 +94,13 @@ class Utils {
       }
     }
     return newList;
+  }
+
+  static selectMultipleItems(Note note, List<Note> list) {
+    if (list.contains(note)) {
+      list.remove(note);
+    } else {
+      list.add(note);
+    }
   }
 }
