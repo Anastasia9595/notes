@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:math' as math;
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
@@ -26,7 +24,7 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
         List<dynamic> notesList = jsonDecode(response.body)['data'];
 
         for (var notesListItems in notesList) {
-          final Note note = state.selectednote.copyWith(
+          final Note note = state.selectedNote.copyWith(
               id: int.tryParse(notesListItems['id']),
               title: notesListItems['attributes']['title'],
               description: notesListItems['attributes']['description'],
@@ -35,14 +33,10 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
               updatedAt: DateTime.tryParse(notesListItems['attributes']['updated_at']));
           notesListdb.add(note);
         }
-        // log(notesListdb.toString());
 
-        // log(listsAreEqual(notesListdb, state.notesList).toString());
         emit(state.copyWith(
             notesList: Utils.listsAreEqual(notesListdb, state.notesList) ? state.notesList : notesListdb,
             isLoading: false));
-        // log(state.notesList.toString());
-        // log(state.isLoading.toString());
       } else {
         log(response.statusCode.toString());
       }
@@ -61,7 +55,7 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
       if (response.statusCode == 200) {
         List<dynamic> notesListDB = jsonDecode(response.body)['data'];
         for (var notesListItems in notesListDB) {
-          Note newNote = state.selectednote.copyWith(
+          Note newNote = state.selectedNote.copyWith(
               id: int.tryParse(notesListItems['id']),
               title: notesListItems['attributes']['title'],
               description: notesListItems['attributes']['description'],
@@ -136,32 +130,35 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     }
   }
 
-  // function to add note to remove list
-  void addNoteToRemovedList(Note note) {
-    var newRemovedList = state.selectedNotestoDeleteList ?? [];
+  void addNoteToRemovedList(int id) {
+    List<Note> newRemovedList = [...state.selectedNotestoDeleteList];
+    Note targetNote = state.notesList.firstWhere((element) => element.id == id);
 
-    if (newRemovedList.contains(note)) {
-      newRemovedList.remove(note);
-      note.copyWith(isNoteSelected: false);
+    int index = newRemovedList.indexWhere((element) => element.id == id);
+    if (index != -1) {
+      newRemovedList.removeAt(index);
+      targetNote = targetNote.copyWith(isNoteSelected: false);
     } else {
-      newRemovedList.add(note);
-      note.copyWith(isNoteSelected: !note.isNoteSelected);
-      log(note.isNoteSelected.toString());
+      newRemovedList.add(targetNote);
+      targetNote = targetNote.copyWith(isNoteSelected: true);
+      log('${targetNote.isNoteSelected}');
     }
-    emit(state.copyWith(selectedNotestoDeleteList: newRemovedList));
+
+    List<Note> newList = state.notesList.map((note) => note.id == id ? targetNote : note).toList();
+
+    emit(state.copyWith(
+      notesList: newList,
+      selectedNotestoDeleteList: newRemovedList,
+    ));
+    log(
+      'note added to removed list: ${state.selectedNotestoDeleteList.length}  ${state.selectedNotestoDeleteList.map((e) => e.id).toList()}',
+    );
   }
 
-  void setNoteToSelected(Note note) {
-    emit(state.copyWith(selectednote: note));
-  }
+  void setNoteToSelected(Note note) {}
 
-  void setNoteToSelectedFromList(Note note) {
-    if (state.selectedNotestoDeleteList?.contains(note) ?? false) {
-      note.copyWith(isNoteSelected: true);
-    } else {
-      note.copyWith(isNoteSelected: false);
-    }
-    log(note.isNoteSelected.toString());
+  void setNoteToSelectedFromList(int id) {
+    Note note = state.notesList.firstWhere((element) => element.id == id);
     emit(state.copyWith(selectednote: note));
   }
 

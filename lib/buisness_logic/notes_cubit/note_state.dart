@@ -3,17 +3,21 @@ import 'package:equatable/equatable.dart';
 import '../model/note.dart';
 
 class NoteState extends Equatable {
-  final Note selectednote;
+  final Note selectedNote;
   final List<Note> notesList;
-  List<Note>? selectedNotestoDeleteList;
+  final List<Note> selectedNotestoDeleteList;
   final bool isLoading;
 
-  NoteState(
-      {required this.selectednote, required this.notesList, required this.isLoading, this.selectedNotestoDeleteList});
+  const NoteState({
+    required this.selectedNote,
+    required this.notesList,
+    required this.isLoading,
+    this.selectedNotestoDeleteList = const [],
+  });
 
   factory NoteState.initial() {
     return NoteState(
-      selectednote: Note(
+      selectedNote: Note(
         id: 0,
         title: '',
         description: '',
@@ -34,9 +38,9 @@ class NoteState extends Equatable {
     bool? isLoading,
   }) {
     return NoteState(
-      selectednote: selectednote ?? this.selectednote,
+      selectedNote: selectednote ?? selectedNote,
       notesList: notesList ?? this.notesList,
-      selectedNotestoDeleteList: selectedNotestoDeleteList ?? [],
+      selectedNotestoDeleteList: selectedNotestoDeleteList ?? this.selectedNotestoDeleteList,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -44,7 +48,7 @@ class NoteState extends Equatable {
   //to map
   Map<String, dynamic> toMap() {
     return {
-      'selectednote': selectednote.toMap(),
+      'selectednote': selectedNote.toMap(),
       'notesList': notesList.map((x) => x.toMap()).toList(),
       'isLoading': isLoading,
     };
@@ -53,12 +57,12 @@ class NoteState extends Equatable {
   //from map
   factory NoteState.fromMap(Map<String, dynamic> map) {
     return NoteState(
-      selectednote: Note.fromMap(map['selectednote']),
+      selectedNote: Note.fromMap(map['selectednote']),
       notesList: List<Note>.from(map['notesList']?.map((x) => Note.fromMap(x))),
       isLoading: map['isLoading'],
     );
   }
 
   @override
-  List<Object?> get props => [selectednote, notesList, selectedNotestoDeleteList, isLoading];
+  List<Object?> get props => [selectedNote, notesList, selectedNotestoDeleteList, isLoading];
 }

@@ -39,12 +39,12 @@ class MobileHomeScreen extends StatelessWidget {
         ),
       );
 
-  bool isNoteSelected(BuildContext context, Note note) {
-    if (context.read<NoteCubit>().state.selectedNotestoDeleteList != null) {
-      return context.read<NoteCubit>().state.selectedNotestoDeleteList?.contains(note) ?? false;
-    }
-    return false;
-  }
+  // bool isNoteSelected(BuildContext context, Note note) {
+  //   if (context.read<NoteCubit>().state.selectedNotestoDeleteList != null) {
+  //     return context.read<NoteCubit>().state.selectedNotestoDeleteList.contains(note);
+  //   }
+  //   return false;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +126,23 @@ class MobileHomeScreen extends StatelessWidget {
                                   ),
                                 ),
                             key: Key(state.notesList[index].toString()),
-                            child: InkWell(
-                              onTap: () {
-                                // context.read<NoteCubit>().setNoteToSelectedFromList(state.notesList[index]);
-                                context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index]);
-                                log(
-                                  'note added to removed list: ${state.selectedNotestoDeleteList?.length} ${state.selectedNotestoDeleteList?.map((e) => e.id).toList()}',
+                            child: BlocBuilder<SelectNoteCubit, SelectNoteState>(
+                              builder: (context, seletNoteState) {
+                                return InkWell(
+                                  onLongPress: () {
+                                    context.read<SelectNoteCubit>().selectNote();
+                                    context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id);
+                                  },
+                                  onTap: () {
+                                    seletNoteState.isNoteSelected
+                                        ? context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id)
+                                        : null;
+                                  },
+                                  child: ListTileNoteComponent(
+                                    note: state.notesList[index],
+                                  ),
                                 );
                               },
-                              child: ListTileNoteComponent(
-                                note: state.notesList[index],
-                              ),
                             ));
                       }
                     },

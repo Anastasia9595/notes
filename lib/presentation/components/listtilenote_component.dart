@@ -4,6 +4,7 @@ import 'package:notes_laravel/buisness_logic/select_note_cubit/select_note_cubit
 import 'package:notes_laravel/helpers/utils.dart';
 
 import '../../buisness_logic/model/note.dart';
+
 import '../../helpers/constants.dart';
 
 class ListTileNoteComponent extends StatelessWidget {
@@ -95,7 +96,7 @@ class ListTileNoteComponent extends StatelessWidget {
         BlocBuilder<SelectNoteCubit, SelectNoteState>(
           builder: (context, state) {
             return Visibility(
-              visible: note.isNoteSelected ? false : true,
+              visible: note.isNoteSelected && state.isNoteSelected ? true : false,
               child: const Icon(Icons.check_circle, color: Colors.red, size: 30),
             );
           },

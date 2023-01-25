@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 
 class Note extends Equatable {
   final int id;
@@ -9,9 +7,9 @@ class Note extends Equatable {
   final bool isFavorite;
   final DateTime createdAt;
   final DateTime updatedAt;
-  bool isNoteSelected;
+  final bool isNoteSelected;
 
-  Note({
+  const Note({
     required this.id,
     required this.title,
     required this.description,
@@ -44,12 +42,13 @@ class Note extends Equatable {
   // from map to object
   factory Note.fromMap(Map<String, dynamic> map) {
     return Note(
-        id: map['id'],
-        title: map['title'],
-        description: map['description'],
-        isFavorite: map['isFavorite'],
-        createdAt: DateTime.parse(map['created_at']),
-        updatedAt: DateTime.parse(map['updated_at']));
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      isFavorite: map['isFavorite'],
+      createdAt: DateTime.parse(map['created_at']),
+      updatedAt: DateTime.parse(map['updated_at']),
+    );
   }
 
   // from object to map

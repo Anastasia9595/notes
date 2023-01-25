@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -8,5 +10,6 @@ class SelectNoteCubit extends Cubit<SelectNoteState> {
 
   void selectNote() {
     emit(state.copyWith(isNoteSelected: !state.isNoteSelected));
+    log('isNoteSelected: ${state.isNoteSelected}');
   }
 }
