@@ -9,6 +9,7 @@ import 'package:notes_laravel/buisness_logic/select_note_cubit/select_note_cubit
 import 'package:notes_laravel/helpers/constants.dart';
 import 'package:notes_laravel/presentation/components/custom_alertdialog.dart';
 import 'package:notes_laravel/presentation/components/listtilenote_component.dart';
+import 'package:notes_laravel/presentation/view/mobile/new_note_screen.dart';
 import 'package:notes_laravel/presentation/widgets/floatinaction_button_widget.dart';
 
 import '../../../buisness_logic/notes_cubit/note_cubit.dart';
@@ -54,15 +55,24 @@ class MobileHomeScreen extends StatelessWidget {
           actions: [
             BlocBuilder<NoteCubit, NoteState>(
               builder: (context, state) {
-                return IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    String token = context.read<LoginCubit>().state.user.token;
-                    log(token.toString());
-                    List<int> selectedNotes =
-                        context.read<NoteCubit>().state.selectedNotestoDeleteList.map((e) => e.id).toList();
-                    context.read<NoteCubit>().deleteMultipleNotesLocal(selectedNotes, token);
-                    state.selectedNotestoDeleteList.clear();
+                return BlocBuilder<SelectNoteCubit, SelectNoteState>(
+                  builder: (context, slectedNoteState) {
+                    return slectedNoteState.isNoteSelected
+                        ? IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              String token = context.read<LoginCubit>().state.user.token;
+                              log(token.toString());
+                              List<int> selectedNotes =
+                                  context.read<NoteCubit>().state.selectedNotestoDeleteList.map((e) => e.id).toList();
+                              context.read<NoteCubit>().deleteMultipleNotesLocal(selectedNotes, token);
+                              state.selectedNotestoDeleteList.clear();
+                            },
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.search),
+                            onPressed: () {},
+                          );
                   },
                 );
               },
@@ -156,10 +166,18 @@ class MobileHomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        floatingActionButton: const CustomFloatinActionButton(
+        floatingActionButton: CustomFloatinActionButton(
           backgroundcolor: Colors.amber,
           icon: Icons.add,
           iconcolor: Colors.black,
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NewNoteScreen(),
+              ),
+            );
+          },
         ));
   }
 }

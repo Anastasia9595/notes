@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class CustomFloatinActionButton extends StatelessWidget {
   const CustomFloatinActionButton({
@@ -8,15 +6,17 @@ class CustomFloatinActionButton extends StatelessWidget {
     required this.backgroundcolor,
     required this.icon,
     required this.iconcolor,
+    required this.onPressed,
   });
   final Color backgroundcolor;
   final IconData icon;
   final Color iconcolor;
+  final Function onPressed;
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () => onPressed(),
       backgroundColor: backgroundcolor,
       child: Icon(
         icon,
