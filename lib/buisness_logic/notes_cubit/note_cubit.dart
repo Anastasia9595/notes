@@ -113,21 +113,25 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     log(response?.statusCode.toString() ?? 'repsonse is null');
     if (response != null) {
       if (response.statusCode == 200) {
-        log('deleted');
-        log(response.body.toString());
-
-        // delete note from local state
-        // List<Note> newNotesList = state.notesList;
-        // for (var id in ids) {
-        //   newNotesList.removeWhere((element) => element.id == id);
-        // }
-        // emit(state.copyWith(notesList: newNotesList));
+        updateNotesLocal(token);
       } else {
         log('${response.statusCode}');
       }
     } else {
       log('response is null');
     }
+  }
+
+  // clean list
+  void cleanselectedNotestoDeleteList() {
+    Note targetNote = state.selectedNote;
+    for (var element in state.selectedNotestoDeleteList) {
+      targetNote = element.copyWith(isNoteSelected: false);
+    }
+    emit(state.copyWith(
+      selectedNotestoDeleteList: [],
+      notesList: state.notesList.map((note) => note.id == targetNote.id ? targetNote : note).toList(),
+    ));
   }
 
   void addNoteToRemovedList(int id) {
@@ -138,9 +142,10 @@ class NoteCubit extends Cubit<NoteState> with HydratedMixin {
     if (index != -1) {
       newRemovedList.removeAt(index);
       targetNote = targetNote.copyWith(isNoteSelected: false);
+      log('${targetNote.isNoteSelected}');
     } else {
-      newRemovedList.add(targetNote);
       targetNote = targetNote.copyWith(isNoteSelected: true);
+      newRemovedList.add(targetNote);
       log('${targetNote.isNoteSelected}');
     }
 

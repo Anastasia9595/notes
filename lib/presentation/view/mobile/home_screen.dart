@@ -1,9 +1,9 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_laravel/buisness_logic/model/note.dart';
 import 'package:notes_laravel/buisness_logic/select_note_cubit/select_note_cubit.dart';
 
 import 'package:notes_laravel/helpers/constants.dart';
@@ -14,7 +14,6 @@ import 'package:notes_laravel/presentation/widgets/floatinaction_button_widget.d
 import '../../../buisness_logic/notes_cubit/note_cubit.dart';
 import '../../../buisness_logic/notes_cubit/note_state.dart';
 import '../../../buisness_logic/login_cubit/login_cubit.dart';
-import '../../../helpers/utils.dart';
 
 class MobileHomeScreen extends StatelessWidget {
   const MobileHomeScreen({super.key});
@@ -39,13 +38,6 @@ class MobileHomeScreen extends StatelessWidget {
         ),
       );
 
-  // bool isNoteSelected(BuildContext context, Note note) {
-  //   if (context.read<NoteCubit>().state.selectedNotestoDeleteList != null) {
-  //     return context.read<NoteCubit>().state.selectedNotestoDeleteList.contains(note);
-  //   }
-  //   return false;
-  // }
-
   @override
   Widget build(BuildContext context) {
     // context.read<NoteCubit>().updateNotesLocal(context.read<LoginCubit>().state.user.token);
@@ -60,11 +52,18 @@ class MobileHomeScreen extends StatelessWidget {
             icon: const Icon(Icons.menu),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                // String token = context.read<LoginCubit>().state.user.token;
-                // context.read<NoteCubit>().deleteMultipleNotesLocal(token);
+            BlocBuilder<NoteCubit, NoteState>(
+              builder: (context, state) {
+                return IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    String token = context.read<LoginCubit>().state.user.token;
+                    log(token.toString());
+                    List<int> selectedNotes =
+                        context.read<NoteCubit>().state.selectedNotestoDeleteList.map((e) => e.id).toList();
+                    context.read<NoteCubit>().deleteMultipleNotesLocal(selectedNotes, token);
+                  },
+                );
               },
             ),
           ],
@@ -131,12 +130,16 @@ class MobileHomeScreen extends StatelessWidget {
                                 return InkWell(
                                   onLongPress: () {
                                     context.read<SelectNoteCubit>().selectNote();
-                                    context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id);
+                                    // seletNoteState.isNoteSelected == false
+                                    //     ? null
+                                    //     : context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id);
+                                    // context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id);
                                   },
                                   onTap: () {
-                                    seletNoteState.isNoteSelected
+                                    seletNoteState.isNoteSelected == true
                                         ? context.read<NoteCubit>().addNoteToRemovedList(state.notesList[index].id)
                                         : null;
+                                    // log(state.selectedNotestoDeleteList.map((e) => e.id).toList().toString());
                                   },
                                   child: ListTileNoteComponent(
                                     note: state.notesList[index],

@@ -38,16 +38,15 @@ class NotesRepository {
 
   Future<Response?> deleteNotes(String token, List<int> ids) async {
     try {
-      Response response = await delete(
-        Uri.parse(Urls.notes),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: {
-          'ids': jsonEncode(ids),
-        },
-      );
+      Response response = await delete(Uri.parse(Urls.notes),
+          headers: Utils.headerHelperFunction(token),
+          body: jsonEncode({
+            'ids': ids
+                .map((note) => {
+                      'id': note,
+                    })
+                .toList(),
+          }));
 
       return response;
     } catch (e) {
