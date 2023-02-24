@@ -62,6 +62,7 @@ class MobileHomeScreen extends StatelessWidget {
                     List<int> selectedNotes =
                         context.read<NoteCubit>().state.selectedNotestoDeleteList.map((e) => e.id).toList();
                     context.read<NoteCubit>().deleteMultipleNotesLocal(selectedNotes, token);
+                    state.selectedNotestoDeleteList.clear();
                   },
                 );
               },
